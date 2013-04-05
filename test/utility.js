@@ -55,6 +55,10 @@ $(document).ready(function() {
     ok(_.isEqual(vals, [0,1,2]), "works as a wrapper");
     // collects return values
     ok(_.isEqual([0, 1, 2], _.times(3, function(i) { return i; })), "collects return values");
+
+    deepEqual(_.times(0, _.identity), []);
+    deepEqual(_.times(-1, _.identity), []);
+    deepEqual(_.times(parseFloat('-Infinity'), _.identity), []);
   });
 
   test("mixin", function() {
@@ -207,7 +211,7 @@ $(document).ready(function() {
     strictEqual(_.result(obj, 'x'), 'x');
     strictEqual(_.result(obj, 'y'), 'x');
     strictEqual(_.result(obj, 'z'), undefined);
-    strictEqual(_.result(null, 'x'), null);
+    strictEqual(_.result(null, 'x'), undefined);
   });
 
   test('_.templateSettings.variable', function() {
@@ -262,5 +266,21 @@ $(document).ready(function() {
     var template = _.template('<<\nx\n>>', null, {evaluate: /<<(.*?)>>/g});
     strictEqual(template(), '<<\nx\n>>');
   });
+
+  test('error', 6, function(){
+    var errorMsg = 'oh, no!';
+    var MyError = _.error(errorMsg);
+    var error = new MyError();
+    ok(error instanceof Error);
+    ok(error instanceof MyError)
+    ok(error.message === errorMsg);
+
+    var specificErrorMsg = 'this error is even more useful';
+    var SpecificError = _.error(specificErrorMsg, MyError);
+    error = new SpecificError();
+    ok(error instanceof MyError);
+    ok(error instanceof SpecificError);
+    ok(error.message === specificErrorMsg);
+  })
 
 });

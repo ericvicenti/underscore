@@ -307,6 +307,7 @@
       <li>- <a href="#unescape">unescape</a></li>
       <li>- <a href="#result">result</a></li>
       <li>- <a href="#template">template</a></li>
+      <li>- <a href="#error">error</a></li>
     </ul>
 
     <a class="toc_title" href="#chaining">
@@ -416,6 +417,15 @@ _.each([1, 2, 3], alert);
 =&gt; alerts each number in turn...
 _.each({one : 1, two : 2, three : 3}, alert);
 =&gt; alerts each number value in turn...</pre>
+
+      <p>
+        <i>
+          Note: Collection functions work on arrays, objects, and
+          array-like objects such as</i> <tt>arguments</tt>, <tt>NodeList</tt><i>
+          and similar. But it works by duck-typing, so avoid passing objects with
+          a numeric <tt>length</tt> property.
+        </i>
+      </p>
 
       <p id="map">
         <b class="header">map</b><code>_.map(list, iterator, [context])</code>
@@ -947,8 +957,7 @@ func();
         <b>methodNames</b>, to be run in the context of that object whenever they
         are invoked. Very handy for binding functions that are going to be used
         as event handlers, which would otherwise be invoked with a fairly useless
-        <i>this</i>. If no <b>methodNames</b> are provided, all of the object's
-        function properties will be bound to it.
+        <i>this</i>. <b>methodNames</b> are required.
       </p>
       <pre>
 var buttonView = {
@@ -1215,7 +1224,7 @@ _.omit({name : 'moe', age : 50, userid : 'moe1'}, 'userid');
       <p id="defaults">
         <b class="header">defaults</b><code>_.defaults(object, *defaults)</code>
         <br />
-        Fill in null and undefined properties in <b>object</b> with values from the
+        Fill in undefined properties in <b>object</b> with values from the
         <b>defaults</b> objects, and return the <b>object</b>. As soon as the
         property is filled, further defaults will have no effect.
       </p>
@@ -1478,7 +1487,8 @@ moe === _.identity(moe);
         <b class="header">times</b><code>_.times(n, iterator, [context])</code>
         <br />
         Invokes the given iterator function <b>n</b> times. Each invocation of
-        <b>iterator</b> is called with an <tt>index</tt> argument.
+        <b>iterator</b> is called with an <tt>index</tt> argument. Produces an
+        array of the returned values.
         <br />
         <i>Note: this example uses the <a href="#chaining">chaining syntax</a></i>.
       </p>
@@ -1548,7 +1558,8 @@ _.unescape('Curly, Larry &amp;amp; Moe');
       <p id="result">
         <b class="header">result</b><code>_.result(object, property)</code>
         <br />
-        If the value of the named property is a function then invoke it; otherwise, return it.
+        If the value of the named <b>property</b> is a function then invoke it
+        with the <b>object</b> as context; otherwise, return it.
       </p>
       <pre>
 var object = {cheese: 'crumpets', stuff: function(){ return 'nonsense'; }};
@@ -1641,6 +1652,40 @@ _.template("Using 'with': <%= data.answer %>", {answer: 'no'}, {variable: 'data'
   JST.project = <%= _.template(jstText).source %>;
 &lt;/script&gt;</pre>
 
+      <p id="error">
+        <b class="header">error</b><code>_.error(errorMessage, [AbstractError])</code>
+        <br />
+        Helps create new JavaScript errors. If an abstract error is not provided, <b>error</b> will extend the generic JavaScript <tt>Error</tt>. 
+      </p>
+
+      <pre>
+var FOO_ERROR = _.error('There was an error with FOO');
+
+var e = new FOO_ERROR();
+
+e instanceof Error
+=> true
+
+e instanceof FOO_ERROR
+=> true
+
+e.message
+=> 'There was an error with FOO'</pre>
+
+      <p>To build a more specific error, provide an <b>AbstractError</b> to extend:</p>
+
+      <pre>
+var FOO_AUTH_ERROR = _.error('FOO could not authenticate', FOO_ERROR);
+
+var e = new FOO_AUTH_ERROR();
+
+e instanceof FOO_ERROR
+=> true
+
+e.message
+=> 'FOO could not authenticate'
+
+throw e;</pre>
 
       <h2 id="chaining">Chaining</h2>
 
